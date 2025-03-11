@@ -1,8 +1,9 @@
-import { FaEnvelope, FaGithub, FaLinkedin, FaPhone, FaStackOverflow, FaTwitter } from "react-icons/fa";
+import { FaEnvelope, FaGithub, FaGitlab, FaLinkedin, FaPhone, FaStackOverflow, FaTwitter } from "react-icons/fa";
 
 export const FAVICON_BY_NAME = {
   linkedin: FaLinkedin,
   github: FaGithub,
+  gitlab: FaGitlab,
   twitter: FaTwitter,
   email: FaEnvelope,
   phone: FaPhone,
