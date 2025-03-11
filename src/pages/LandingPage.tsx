@@ -1,8 +1,6 @@
-import React from 'react';
 import { FAVICON_BY_NAME } from 'features/socials/utils';
-import 'LandingPage.css';
 import { useSocialsRequest } from 'features/socials/hooks/api';
-const LandingPage: React.FC = () => {
+function LandingPage() {
     const {data: socials, error} = useSocialsRequest();
     return (
       <div className="landing-page">

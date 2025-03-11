@@ -3,8 +3,8 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   text-align: center;
+  height: 75vh;
 }
 
 .social-links {
@@ -13,10 +13,13 @@
 
 .social-links a {
   margin: 0 10px;
-  font-size: 24px; /* Adjust the size of the icons */
-  color: #0073b1; /* Example color */
+  font-size: 24px;
+  /* Adjust the size of the icons */
+  color: #0073b1;
+  /* Example color */
 }
 
 .social-links a:hover {
-  color: #005582; /* Darker color on hover */
+  color: #005582;
+  /* Darker color on hover */
 }
