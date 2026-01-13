@@ -5,7 +5,7 @@ function login(username:string){
     const initiateAuth = new InitiateAuthCommand({
         AuthFlow: AuthFlowType.USER_AUTH,
         AuthParameters: { USERNAME: username},
-        ClientId: '6in64kdn143hc351pq4v3qua7a'
+        ClientId: '23hqn3k8tir305rg4gcj859b75'
     })
     client.send(initiateAuth).then(
         (response) => {
@@ -13,7 +13,7 @@ function login(username:string){
             if(response.ChallengeName === ChallengeNameType.SELECT_CHALLENGE){
                 return client.send(new RespondToAuthChallengeCommand({
                     ChallengeName: ChallengeNameType.SELECT_CHALLENGE,
-                    ClientId: '6in64kdn143hc351pq4v3qua7a',
+                    ClientId: '23hqn3k8tir305rg4gcj859b75',
                     ChallengeResponses: {USERNAME: username, ANSWER: ChallengeNameType.EMAIL_OTP},
                     Session: response.Session
                 }))
