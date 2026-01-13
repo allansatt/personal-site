@@ -3,7 +3,7 @@ import { useAuth } from "react-oidc-context";
 function LoginBar() {
   const auth = useAuth();
   const signOutRedirect = () => {
-    const clientId = "562fb404mk72t8jfipjlmulq9c";
+    const clientId = "23hqn3k8tir305rg4gcj859b75";
     const logoutUri = "https://fe.allansattelbergrivera.com/";
     const cognitoDomain = "https://auth.allansattelbergrivera.com";
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
