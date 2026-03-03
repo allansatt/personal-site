@@ -22,7 +22,8 @@ Add a Poker Hands feature to the personal site that allows authenticated users t
 - **FR-10** (Fault) — If `GET /download` returns 409 (job not completed), then the frontend shall display an informative message and not initiate a download.
 - **FR-11** (Fault) — If any API call returns a 500 response, then the frontend shall display a generic error message to the user.
 - **FR-12** (Ubiquitous) — The frontend shall include the Cognito access token as a `Bearer` token in the `Authorization` header for all requests to the `ignition_hands_converter` API.
-- **FR-13** (State-driven) — While the user is unauthenticated, the `/pokerhands` route shall not be accessible and the frontend shall display a sign-in prompt in its place.
+- **FR-13** (State-driven) — While the user is authenticated, the site navigation shall display a link to `/pokerhands`.
+- **FR-14** (State-driven) — While the user is unauthenticated, the `/pokerhands` route shall not be accessible and the frontend shall display a sign-in prompt in its place.
 
 ## Non-functional requirements
 
@@ -56,6 +57,10 @@ Follows the established pattern (`features/login/`, `features/socials/`) with su
 
 **New page route:**
 - Add a dedicated `/pokerhands` route using React Router, rendered only when `auth.isAuthenticated`.
+
+**Navigation:**
+- The existing `LoginBar` component (or a new sibling `NavBar` component) shall render a React Router `<Link>` to `/pokerhands` when the user is authenticated.
+- The nav link is hidden when the user is unauthenticated, keeping the unauthenticated landing page unchanged.
 
 ### Authentication flow
 
