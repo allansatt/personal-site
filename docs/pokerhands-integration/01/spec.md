@@ -1,7 +1,7 @@
 # Feature: Poker Hands Integration
 
 **Revision**: 01
-**Status**: Draft
+**Status**: Review
 **Created**: 2026-03-02
 
 ## Summary
@@ -14,14 +14,15 @@ Add a Poker Hands feature to the personal site that allows authenticated users t
 - **FR-2** (Event-driven) — When an authenticated user selects a hand history `.txt` file and submits the upload form, the frontend shall request a presigned upload URL from `POST /upload-url` with the filename, upload the file directly to S3 via the returned URL, and display a confirmation that the job was queued.
 - **FR-3** (State-driven) — While the Poker Hands page is active and the user is authenticated, the frontend shall fetch and display the user's job list from `GET /files` including each job's display name, status, and creation date.
 - **FR-4** (Event-driven) — When the jobs list response includes a `nextToken`, the frontend shall provide a mechanism to load additional pages of results using the `nextToken` as a query parameter.
-- **FR-5** (State-driven) — While a job's status is `pending` or any non-`completed` state, the frontend shall display that status clearly and shall not show a download action for that job.
-- **FR-6** (State-driven) — While a job's status is `completed`, the frontend shall display a download action for that job.
-- **FR-7** (Event-driven) — When an authenticated user activates the download action for a completed job, the frontend shall request a presigned download URL from `GET /download?jobId=<id>` and initiate a file download in the browser using the returned URL.
-- **FR-8** (Event-driven) — When any API call returns a 401 response, the frontend shall prompt the user to sign in.
-- **FR-9** (Fault) — If `GET /download` returns 409 (job not completed), then the frontend shall display an informative message and not initiate a download.
-- **FR-10** (Fault) — If any API call returns a 500 response, then the frontend shall display a generic error message to the user.
-- **FR-11** (Ubiquitous) — The frontend shall include the Cognito access token as a `Bearer` token in the `Authorization` header for all requests to the `ignition_hands_converter` API.
-- **FR-12** (State-driven) — While the user is unauthenticated, the Poker Hands page shall not be accessible and the frontend shall display a sign-in prompt in its place.
+- **FR-5** (State-driven) — While a job's status is `pending` or any non-`completed` state, the frontend shall display a loading circle animation alongside that job and shall not show a download action for that job.
+- **FR-6** (State-driven) — While any job in the list has status `pending`, the frontend shall poll `GET /files` every 3 seconds and update the job list in place until no `pending` jobs remain.
+- **FR-7** (State-driven) — While a job's status is `completed`, the frontend shall display a download action for that job.
+- **FR-8** (Event-driven) — When an authenticated user activates the download action for a completed job, the frontend shall request a presigned download URL from `GET /download?jobId=<id>` and initiate a file download in the browser using the returned URL.
+- **FR-9** (Event-driven) — When any API call returns a 401 response, the frontend shall prompt the user to sign in.
+- **FR-10** (Fault) — If `GET /download` returns 409 (job not completed), then the frontend shall display an informative message and not initiate a download.
+- **FR-11** (Fault) — If any API call returns a 500 response, then the frontend shall display a generic error message to the user.
+- **FR-12** (Ubiquitous) — The frontend shall include the Cognito access token as a `Bearer` token in the `Authorization` header for all requests to the `ignition_hands_converter` API.
+- **FR-13** (State-driven) — While the user is unauthenticated, the `/pokerhands` route shall not be accessible and the frontend shall display a sign-in prompt in its place.
 
 ## Non-functional requirements
 
@@ -47,10 +48,14 @@ Follows the established pattern (`features/login/`, `features/socials/`) with su
 - `PokerHandsPage` — top-level page component; guards render on auth state; composes upload form and job list.
 - `UploadForm` — file input (`accept=".txt"`) + submit button; drives the upload flow (get URL → PUT to S3 → refresh list).
 - `JobList` — renders a table/list of jobs from `useJobList`; shows display name, status badge, creation date, download button (when completed), and a "Load more" control when `nextToken` is present.
-- `JobStatusBadge` — visual indicator for `pending` / `completed` / other statuses.
+- `JobStatusBadge` — visual indicator for `pending` (spinning circle animation) / `completed` / other statuses.
+
+**Polling behavior:**
+- A `useJobPoller` hook (or equivalent logic inside `JobList`) runs a `setInterval` at 3-second intervals when any job in the list has `pending` status.
+- The interval is cleared as soon as all visible jobs reach `completed` (or terminal error) status, or when the component unmounts.
 
 **New page route:**
-- Add a route at `/pokerhands` (or integrate as a section in `LandingPage`) rendered only when `auth.isAuthenticated`.
+- Add a dedicated `/pokerhands` route using React Router, rendered only when `auth.isAuthenticated`.
 
 ### Authentication flow
 
@@ -71,9 +76,9 @@ All three endpoints live under `https://api.allansattelbergrivera.com` (same dom
 
 - Assumes the `ignition_hands_converter` API Gateway is already deployed and accessible at `https://api.allansattelbergrivera.com`.
 - Assumes CORS is configured on the API Gateway to allow requests from `https://fe.allansattelbergrivera.com`.
-- Assumes the Cognito User Pool and Client ID used by `personal-site` are the same pool that authorizes the `ignition_hands_converter` endpoints.
+- The Cognito User Pool at `auth.allansattelbergrivera.com` (Client ID `23hqn3k8tir305rg4gcj859b75`) is the same pool that authorizes the `ignition_hands_converter` API Gateway endpoints.
 - No new backend infrastructure changes are in scope for this feature.
-- Routing approach (React Router vs. conditional render within LandingPage) is flexible; the spec does not mandate a specific router library.
+- React Router will be introduced as a new dependency to support the `/pokerhands` dedicated route alongside the existing root route.
 
 ## Out of scope
 
@@ -81,5 +86,4 @@ All three endpoints live under `https://api.allansattelbergrivera.com` (same dom
 - Adding new API endpoints beyond the three already implemented.
 - Displaying the parsed hand history content inline (only upload/download of files).
 - Admin or multi-user views (job list is scoped to the authenticated user only).
-- Real-time job status polling (manual refresh or on-load fetch is sufficient for v1).
 - Mobile-specific responsive design beyond what the existing SASS setup provides.
