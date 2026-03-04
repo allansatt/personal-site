@@ -1,11 +1,13 @@
 import { useAuth } from "react-oidc-context";
 
+const frontendBaseUrl = import.meta.env.VITE_FRONTEND_BASE_URL;
+const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID;
+const cognitoDomain = import.meta.env.VITE_COGNITO_DOMAIN;
+
 function LoginBar() {
   const auth = useAuth();
   const signOutRedirect = () => {
-    const clientId = "23hqn3k8tir305rg4gcj859b75";
-    const logoutUri = "https://fe.allansattelbergrivera.com/";
-    const cognitoDomain = "https://auth.allansattelbergrivera.com";
+    const logoutUri = frontendBaseUrl;
     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
   };
   if (auth.isLoading) {
