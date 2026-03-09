@@ -1,4 +1,5 @@
 import { useAuth } from "react-oidc-context";
+import { Link } from "react-router-dom";
 
 const frontendBaseUrl = import.meta.env.VITE_FRONTEND_BASE_URL;
 const clientId = import.meta.env.VITE_COGNITO_CLIENT_ID;
@@ -18,9 +19,10 @@ function LoginBar() {
   }
   if (auth.isAuthenticated) {
     console.log(auth.isAuthenticated);
-    console.log(auth.user?.access_token)
+    console.log(auth.user?.id_token)
     return (
       <div className = "login-bar">
+        <Link to="/pokerhands">Poker Hands</Link>
         <button onClick={() => auth.removeUser().then(() => signOutRedirect())}>Sign out</button>
       </div>
     );
